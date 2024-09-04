@@ -1,0 +1,23 @@
+textarea {
+    min-height: 400px;
+}
+.email{
+    border: 1px solid black;
+    padding: 1px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.email:hover{
+    border: 2px solid black;
+}
+h5,p{margin-bottom: 0px;}
+h5{margin-right: 20px;}
+#time{
+    margin: auto;
+    margin-right: 5px;
+}
+.info{
+    font-size: 20px;
+}
