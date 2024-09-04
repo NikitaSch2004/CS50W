@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if user.is_authenticated %}
+<form action = "save" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <br>
+    <button  class="btn btn-primary" type="submit" value="Submit" style="margin-left: 2px;">Submit</button>
+</form>
+{% endif %}
+<hr>
+<div id="post-section"></div>
+<button class="btn btn-primary" id="previous-button">Previous</button>
+<button class="btn btn-primary" id="next-button">Next</button>
+{% endblock %}

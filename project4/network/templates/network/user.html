@@ -1,0 +1,18 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h1 id="user">{{ page_user }}</h1>
+<div>Followers:{{followers}}</div>
+<div>Following:{{following}}</div>
+{% if user.is_authenticated and user.username != page_user%}
+    {% if is_following %}
+        <button onclick="Unfollow('{{user.username}}','{{page_user}}')">Unfollow</button>
+    {% else %}
+        <button onclick="Follow('{{user.username}}','{{page_user}}')">Follow</button>
+    {% endif %}
+{% endif %}
+<div id="user-post-section"></div>
+<button  class="btn btn-primary" id="user-previous-button">Previous</button>
+<button  class="btn btn-primary" id="user-next-button">Next</button>
+{% endblock %}
