@@ -1,0 +1,143 @@
+{% extends "auctions/layout.html" %}
+{% load widget_tweaks %}
+{% block title %}Listing {{Listing.title}}{% endblock %}
+{% block head %}
+<style>
+    #main{
+        margin: auto;
+        max-width: 60%;
+    }
+    .info{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+    form{
+        padding: 0px !important;
+    }
+    #bid-info{
+        color: gray;
+    }
+    #create-info{
+        display: flex;
+        justify-content: right;
+    }
+    #comment-info{
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        margin-bottom: 5px;
+    }
+    #comment-info h6{
+        margin:0px;
+        font-size: 16px;
+    }
+    #comment-info img{
+        width: 32px;
+        height: 32px;
+    }
+    #comment-txt{
+        border: 1px solid gray;
+        width: 80%;
+    }
+    #btn-section{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    <div id="main">
+        <div class="info">
+            <h1>Listing {{ Listing.title }}</h1>
+            <IMG SRC='{{Listing.url_image}}' alt="image of {{ Listing.title }}" style="width: 50%; height: auto;">
+        </div>
+        <h5>category: {{ Listing.category }}</h5>
+        <h6 style="margin:0px;">Description:</h6><p>{{ Listing.description }}</p>
+        <h5 id="bid">Current Price: {{ Listing.bid }}$</h5>
+        <h5>Last Bid: {{ Listing.last_bid }}$</h5>
+        <br>
+        <div id="create-info">Created by:
+        {% for usr in Users %}
+            {% if Listing.user_id == usr.id %}
+                {{ usr.username }}
+            {% endif %}
+        {% endfor %}
+            <br>
+            {{ Listing.dateTime }}
+        </div>
+        <hr>
+        {% if not Listing.closed %}
+        <form action="{% url 'listing' Listing.title %}" method="post" style="padding-left: 10px;">
+            {% csrf_token %}    
+            <h3>Place a bid</h3> 
+            <div class="form-group">
+                {{ form.bid_value.label_tag }}
+                <br>
+                {{ form.bid_value }}$
+                {% render_field form.user_id value=user.id %}
+            <p id="bid-info">The bid must be at least as large as the current price, and must be greater than any other bids that have been placed!</p>
+            </div>
+            <input type="submit" value="Place Bid" class="btn btn-light" style="border: 1px solid black;">
+        </form>
+        {% endif %}
+            <hr>
+            <div id="btn-section">
+                <form action="{% url 'watchlist' user.username %}" method="post" style="padding-left: 10px;">
+                    {% csrf_token %} 
+                    <input type="text" value="{{ Listing.listing_id }}" name="listing_id" hidden>
+                    {% if in_watchlist%}
+                    <input type="text" value="{{in_watchlist}}" name="in_watchlist" hidden>
+                    <button class="btn btn-light" style="border: 1px solid black;">Remove from Watchlist</button>
+                    {% else %}
+                    <input type="text" value="" name="in_watchlist" hidden>
+                    <button class="btn btn-light" style="border: 1px solid black;">Add To Watchlist</button>
+                    {% endif %}
+                </form>
+                {% if Listing.closed == 0 %}
+                    {% if Listing.user_id == user.id %}
+                    <form action="{% url 'listing' Listing.title %}" method="post" style="padding-left: 10px;">
+                        {% csrf_token %} 
+                        <button class="btn btn-light" style="border: 1px solid black;">Close Auction</button>   
+                    </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <hr>
+            <h2 style="text-align: center;">Add a Comment</h2>
+            <form action="{% url 'index' %}" method="post" style="padding-left: 10px;">
+                {% csrf_token %}    
+                <div class="form-group">
+                    {{ Comment.title.label_tag }}
+                    <br>
+                    {{ Comment.title }}
+                </div>
+                <div class="form-group">
+                    {{ Comment.body.label_tag }}
+                    <br>
+                    {{ Comment.body }}
+                </div>
+                {% render_field Comment.user_id value=user.id %}
+                {% render_field Comment.listing_id value=Listing.listing_id %}
+                <input type="submit" value="Add Comment" class="btn btn-light" style="border: 1px solid black;">
+            </form>
+            <hr>
+            <h2 style="text-align: center;">Comment Section</h2>
+            <br>
+            <div>
+                {% for comment in View_Comments %}
+                <div id="comment-info">
+                    <img src="https://icons.veryicon.com/png/System/Icons8%20Metro%20Style/Users%20User.png">
+                    {% for usr in Users %}
+                        {% if usr.id == comment.user_id_id %}
+                            <h6>{{ usr.username }}</h6>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <h5 style="margin:0px;">{{comment.title}}:</h5>
+                <p id="comment-txt">{{comment.body}}</p>
+                <br>
+                {% endfor %}
+            </div>
+    </div>
+{% endblock %}
